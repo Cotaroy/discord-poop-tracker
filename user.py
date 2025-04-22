@@ -21,7 +21,13 @@ class User:
     def log_poop(self, n: int):
         """log n poops"""
         self.poops.log_poop(n)
-        return f'Your poop count has increased by {n}.'
+        if n < 0:
+            change = f'decreased by {abs(n)}.'
+        elif n > 0:
+            change = f'increased by {n}.'
+        else:
+            change = 'not changed...'
+        return f'Your poop count has {change}'
 
     def save(self):
         """save user data into USER_DATA_FOLDER"""

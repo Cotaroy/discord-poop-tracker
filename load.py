@@ -3,6 +3,7 @@ import json
 import os
 from datetime import datetime
 
+from leaderboard import Leaderboard
 from user import User
 from poops import Poops
 from const import USER_DATA_FOLDER
@@ -43,9 +44,26 @@ def find_file(filename, search_path):
     return None
 
 
-def user_exists(id) -> bool:
+def user_exists(id: str) -> bool:
     """check if id already has a file in player_data"""
     file_path = f'{id}.json'
     if find_file(file_path, USER_DATA_FOLDER) is not None:
         return True
     return False
+
+
+def load_leaderboard(ignored: set = None) -> Leaderboard:
+    """load leaderboard"""
+    if ignored is None:
+        ignored = {'SAMPLE.json'}
+
+    file_path = str(__file__).replace('load.py', '') + 'user_data'
+
+    users = []
+    for files in os.listdir(file_path):
+        if str(files) not in ignored:
+            id = str(files).replace('.json', '')
+            user = load_user(id)
+            users.append(user)
+
+    return Leaderboard(users)

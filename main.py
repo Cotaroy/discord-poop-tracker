@@ -5,7 +5,7 @@ from discord import app_commands
 
 from creds import TOKEN, SERVER_ID
 
-from load import load_user, user_exists
+from load import load_leaderboard, load_user, user_exists
 from user import User
 from validate import validate_date
 
@@ -82,7 +82,7 @@ async def log_poops(ctx, n: int = 1):
     description="look at how many times you pooped on a date (YYYY-MM-DD), 'total' or 'today'",
     guild=discord.Object(SERVER_ID)
 )
-async def check_log(ctx, date: str):
+async def check_log(ctx, date: str = 'today'):
     """log n poops"""
     id = ctx.user.id
     if not user_exists(id):
@@ -96,11 +96,32 @@ async def check_log(ctx, date: str):
         else:
             if date == 'total':
                 msg = f'You pooped {count} time(s) in total :poop:'
-            elif date == 'today' or str(datetime.today().date()):
+            elif date == 'today' or date == str(datetime.today().date()).replace('/', '-'):
                 msg = f'You pooped {count} time(s) today :poop:'
             else:
                 msg = f'You pooped {count} time(s) on {date} :poop:'
             await ctx.response.send_message(msg)
+
+
+@tree.command(
+    name="leaderboard",
+    description="look at a leaderboard on a date (YYYY-MM-DD), 'total' or 'today'",
+    guild=discord.Object(SERVER_ID)
+)
+async def leaderboard(ctx, date: str = 'today'):
+    """look at leaderboard on date"""
+
+    if not validate_date(date):
+        await ctx.response.send_message('Please enter a valid date stinky poo :rage:')
+    else:
+        leaderboard = load_leaderboard()
+        if date == 'total':
+            msg = leaderboard.get_total_leaderboard()
+        elif date == 'today' or date == str(datetime.today().date()).replace('/', '-'):
+            msg = leaderboard.get_today_leaderboard()
+        else:
+            msg = leaderboard.get_date_leaderboard(date)
+        await ctx.response.send_message(msg)
 
 
 client.run(TOKEN)
