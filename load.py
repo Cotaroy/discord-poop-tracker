@@ -1,5 +1,6 @@
 
 import json
+import os
 from datetime import datetime
 
 from user import User
@@ -31,3 +32,19 @@ def load_user(id: str) -> User:
     poops = Poops(today, total, log)
 
     return User(id, name, poops)
+
+
+def find_file(filename, search_path):
+    """look for filename in search_path"""
+    for root, _, files in os.walk(search_path):
+        if filename in files:
+            return os.path.join(root, filename)
+    return None
+
+
+def check_user_exists(id) -> bool:
+    """check if id already has a file in player_data"""
+    file_path = f'{id}.json'
+    if find_file(file_path, USER_DATA_FOLDER) is not None:
+        return True
+    return False
