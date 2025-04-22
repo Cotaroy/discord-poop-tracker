@@ -28,7 +28,7 @@ async def on_ready():
     channel = client.get_channel(int(CHANNEL_ID))
     print("Bot ready")
     print("---------------------")
-    # await channel.send(f"<@&{ROLE_ID}> \n gub gub is alive again!!! :poop:")
+    await channel.send(f"<@&{ROLE_ID}> \n gub gub is alive again!!! :poop:")
 
 
 @tree.command(
