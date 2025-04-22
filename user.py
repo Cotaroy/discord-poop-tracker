@@ -47,8 +47,9 @@ class User:
         date in {'today', 'total'} or is YYYY-MM-DD
         """
         if date == 'today':
-            return self.poops.today
+            output = self.poops.today
         elif date == 'total':
-            return self.poops.total
+            output = self.poops.total
         else:
-            return self.poops.log[date]
+            output = self.poops.log[date]
+        return output

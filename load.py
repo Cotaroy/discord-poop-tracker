@@ -11,7 +11,7 @@ def load_user(id: str) -> User:
     """load user data from USER_DATA_FOLDER/id.json"""
     file_path = f'{USER_DATA_FOLDER}{id}.json'
     with open(file_path, 'r') as f:
-        user_data = json.load(file_path, f)
+        user_data = json.load(f)
 
     name = user_data['name']
 

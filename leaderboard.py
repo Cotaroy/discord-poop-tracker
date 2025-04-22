@@ -33,7 +33,6 @@ class Leaderboard:
         for user in self.users:
             build_line = f'\n{user.name} -> {str(user.poops)}'
             output += build_line
-
         return output
 
     def get_total_leaderboard(self):
@@ -45,7 +44,6 @@ class Leaderboard:
         for i in range(len(self.users)):
             build_line = f'\n[1] -> {self.users[i].name}: {self.users[i].poops.total}'
             output += build_line
-
         return output
 
     def get_today_leaderboard(self):
@@ -57,19 +55,19 @@ class Leaderboard:
         for i in range(len(self.users)):
             build_line = f'\n[1] -> {self.users[i].name}: {self.users[i].poops.today}'
             output += build_line
-
         return output
 
     def get_date_leaderboard(self, date: str):
         """
         show leaderboard on date
         """
-        date_set = {set(user.poops.log.keys()) for user in self.users}
+        date_set = [user.poops.log for user in self.users]
         final = set()
         for days in date_set:
-            final.union(days)
+            final.union(set(days.keys()))
         if date not in date_set:
-            return "No one has pooped on that day."
+            output = "No one has pooped on that day."
+            return output
 
         output = f"{date} Poop Leaderboard \n-------------------------"
 
@@ -79,7 +77,6 @@ class Leaderboard:
             if date in self.users[i].poops.log:
                 build_line = f'\n[1] -> {self.users[i].name}: {self.users[i].poops.log[date]}'
                 output += build_line
-
         return output
 
     def get_total_poops(self):
