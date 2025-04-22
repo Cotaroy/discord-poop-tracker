@@ -3,7 +3,7 @@ from datetime import datetime
 import discord
 from discord import app_commands
 
-from creds import TOKEN, SERVER_ID
+from creds import TOKEN, SERVER_ID, CHANNEL_ID
 
 from load import load_leaderboard, load_user, user_exists
 from user import User
@@ -24,9 +24,10 @@ async def on_ready():
     """prepare bot"""
     await tree.sync(guild=discord.Object(SERVER_ID))
 
-    channel = client.get_channel()
+    channel = client.get_channel(int(CHANNEL_ID))
     print("Bot ready")
     print("---------------------")
+    await channel.send("")
 
 
 @tree.command(
