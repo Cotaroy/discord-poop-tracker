@@ -1,9 +1,10 @@
+
 from datetime import datetime
 
 import discord
 from discord import app_commands
 
-from creds import TOKEN, SERVER_ID, CHANNEL_ID
+from creds import TOKEN, SERVER_ID, CHANNEL_ID, ROLE_ID
 
 from load import load_leaderboard, load_user, user_exists
 from user import User
@@ -27,7 +28,7 @@ async def on_ready():
     channel = client.get_channel(int(CHANNEL_ID))
     print("Bot ready")
     print("---------------------")
-    await channel.send("")
+    # await channel.send(f"<@&{ROLE_ID}> \n gub gub is alive again!!! :poop:")
 
 
 @tree.command(
@@ -42,6 +43,8 @@ async def register(interaction):
     already_registered = user_exists(id)
 
     if not already_registered:
+        role = interaction.user.guild.get_role(int(ROLE_ID))
+        await interaction.user.add_roles(role)
         user = User(id, name)
         user.save()
         await interaction.response.send_message(f'Registering new user \n Welcome {name} :tada:')
@@ -58,9 +61,35 @@ async def reregister(ctx):
     """reregister user into star rail sim players"""
     id = ctx.user.id
     name = ctx.user.name
+    role = ctx.user.guild.get_role(int(ROLE_ID))
+    await ctx.user.add_roles(role)
     user = User(id, name)
     user.save()
     await ctx.response.send_message('Resetting user data')
+
+
+@tree.command(
+    name="rerole",
+    description="gives you the gubbers role",
+    guild=discord.Object(SERVER_ID)
+)
+async def rerole(ctx):
+    """gives the role that is affiliated with ROLE_ID"""
+    role = ctx.user.guild.get_role(int(ROLE_ID))
+    await ctx.user.add_roles(role)
+    await ctx.response.send_message('You have been reroled!')
+
+
+@tree.command(
+    name="derole",
+    description="takes away the gubbers role",
+    guild=discord.Object(SERVER_ID)
+)
+async def rerole(ctx):
+    """gives the role that is affiliated with ROLE_ID"""
+    role = ctx.user.guild.get_role(int(ROLE_ID))
+    await ctx.user.remove_roles(role)
+    await ctx.response.send_message('You have been deroled!')
 
 
 @tree.command(
