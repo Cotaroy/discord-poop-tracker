@@ -23,6 +23,8 @@ def blockify(inp) -> str:
 async def on_ready():
     """prepare bot"""
     await tree.sync(guild=discord.Object(SERVER_ID))
+
+    channel = client.get_channel()
     print("Bot ready")
     print("---------------------")
 
