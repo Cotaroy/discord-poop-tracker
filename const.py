@@ -1,0 +1,7 @@
+"""
+any constants
+
+NOTE THAT DATES WILL ALWAYS BE IN YYYY/MM/DD FORMAT
+"""
+
+USER_DATA_FOLDER = 'user_data/'

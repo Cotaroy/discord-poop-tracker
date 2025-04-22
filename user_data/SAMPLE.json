@@ -1,0 +1,8 @@
+{
+    "id": "SAMPLE",
+    "name": "Bob Smith",
+    "poops": {
+        "total": 10,
+        "2025-04-22": 10
+    }
+}
