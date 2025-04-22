@@ -31,6 +31,7 @@ def load_user(id: str) -> User:
 
     poops = Poops(today, total, log)
 
+    f.close()
     return User(id, name, poops)
 
 
@@ -42,7 +43,7 @@ def find_file(filename, search_path):
     return None
 
 
-def check_user_exists(id) -> bool:
+def user_exists(id) -> bool:
     """check if id already has a file in player_data"""
     file_path = f'{id}.json'
     if find_file(file_path, USER_DATA_FOLDER) is not None:
