@@ -38,4 +38,17 @@ class User:
         with open(file_path, 'w') as f:
             dict = self._to_json_dict()
             json.dump(dict, f, **{"indent": 4})
+            f.close()
 
+    def get_poop_count(self, date: str = 'total'):
+        """
+        get poop count on date
+
+        date in {'today', 'total'} or is YYYY-MM-DD
+        """
+        if date == 'today':
+            return self.poops.today
+        elif date == 'total':
+            return self.poops.total
+        else:
+            return self.poops.log[date]

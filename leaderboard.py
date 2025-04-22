@@ -14,6 +14,13 @@ def _get_user_total_poop(user: User) -> int:
     return user.poops.total
 
 
+def _get_user_date_poop(user: User, date: str) -> int:
+    """return total user poop"""
+    if date not in user.poops.log:
+        return 0
+    return user.poops.log[date]
+
+
 @dataclass
 class Leaderboard:
     """Leader Board of Users"""
@@ -42,7 +49,7 @@ class Leaderboard:
         return output
 
     def get_today_leaderboard(self):
-        """show total leaderboard"""
+        """show today's leaderboard"""
         output = "Today's Poop Leaderboard \n-------------------------"
 
         self._sort_by_poop('today')
@@ -50,6 +57,28 @@ class Leaderboard:
         for i in range(len(self.users)):
             build_line = f'\n[1] -> {self.users[i].name}: {self.users[i].poops.today}'
             output += build_line
+
+        return output
+
+    def get_date_leaderboard(self, date: str):
+        """
+        show leaderboard on date
+        """
+        date_set = {set(user.poops.log.keys()) for user in self.users}
+        final = set()
+        for days in date_set:
+            final.union(days)
+        if date not in date_set:
+            return "No one has pooped on that day."
+
+        output = f"{date} Poop Leaderboard \n-------------------------"
+
+        self._sort_by_poop(date)
+
+        for i in range(len(self.users)):
+            if date in self.users[i].poops.log:
+                build_line = f'\n[1] -> {self.users[i].name}: {self.users[i].poops.log[date]}'
+                output += build_line
 
         return output
 
@@ -69,7 +98,9 @@ class Leaderboard:
         """
         if date == 'today':
             val = _get_user_today_poop
-        else:
+        elif date == 'total':
             val = _get_user_total_poop
+        else:
+            val = _get_user_date_poop
 
-        quicksort(self.users, 0, len(self.users), val)
+        quicksort(self.users, 0, len(self.users), val, reverse=True)
