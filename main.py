@@ -160,7 +160,11 @@ async def on_message(msg):
     """send message through bot from ,dms if you have the OWNER_ID"""
     if isinstance(msg.channel, discord.DMChannel) and str(msg.author.id) in OWNER_IDS:
         channel = client.get_channel(int(CHANNEL_ID))
-        await channel.send(msg.content)
+        if msg.content != '':
+            await channel.send(msg.content)
+        if msg.attachments:
+            for attach in msg.attachments:
+                await channel.send(attach.url)
 
 
 if __name__ == '__main__':
