@@ -1,10 +1,9 @@
-
 from datetime import datetime
 
 import discord
 from discord import app_commands
 
-from creds import TOKEN, SERVER_ID, CHANNEL_ID, ROLE_ID
+from creds import TOKEN, SERVER_ID, CHANNEL_ID, ROLE_ID, OWNER_IDS
 
 from load import load_leaderboard, load_user, user_exists
 from user import User
@@ -28,7 +27,7 @@ async def on_ready():
     channel = client.get_channel(int(CHANNEL_ID))
     print("Bot ready")
     print("---------------------")
-    await channel.send(f"<@&{ROLE_ID}> \n gub gub is alive again!!! :poop:")
+    # await channel.send(f"<@&{ROLE_ID}> \n gub gub is alive again!!! :poop:")
 
 
 @tree.command(
@@ -57,15 +56,15 @@ async def register(interaction):
     description="reset your user data",
     guild=discord.Object(SERVER_ID)
 )
-async def reregister(ctx):
+async def reregister(interaction):
     """reregister user into star rail sim players"""
-    id = ctx.user.id
-    name = ctx.user.name
-    role = ctx.user.guild.get_role(int(ROLE_ID))
-    await ctx.user.add_roles(role)
+    id = interaction.user.id
+    name = interaction.user.name
+    role = interaction.user.guild.get_role(int(ROLE_ID))
+    await interaction.user.add_roles(role)
     user = User(id, name)
     user.save()
-    await ctx.response.send_message('Resetting user data')
+    await interaction.response.send_message('Resetting user data')
 
 
 @tree.command(
@@ -73,11 +72,11 @@ async def reregister(ctx):
     description="gives you the gubbers role",
     guild=discord.Object(SERVER_ID)
 )
-async def rerole(ctx):
+async def rerole(interaction):
     """gives the role that is affiliated with ROLE_ID"""
-    role = ctx.user.guild.get_role(int(ROLE_ID))
-    await ctx.user.add_roles(role)
-    await ctx.response.send_message('You have been reroled!')
+    role = interaction.user.guild.get_role(int(ROLE_ID))
+    await interaction.user.add_roles(role)
+    await interaction.response.send_message('You have been reroled!')
 
 
 @tree.command(
@@ -85,11 +84,11 @@ async def rerole(ctx):
     description="takes away the gubbers role",
     guild=discord.Object(SERVER_ID)
 )
-async def rerole(ctx):
+async def rerole(interaction):
     """gives the role that is affiliated with ROLE_ID"""
-    role = ctx.user.guild.get_role(int(ROLE_ID))
-    await ctx.user.remove_roles(role)
-    await ctx.response.send_message('You have been deroled!')
+    role = interaction.user.guild.get_role(int(ROLE_ID))
+    await interaction.user.remove_roles(role)
+    await interaction.response.send_message('You have been deroled!')
 
 
 @tree.command(
@@ -97,16 +96,16 @@ async def rerole(ctx):
     description="log your poops, default to 1",
     guild=discord.Object(SERVER_ID)
 )
-async def log_poops(ctx, n: int = 1):
+async def log_poops(interaction, n: int = 1):
     """log n poops"""
-    id = ctx.user.id
+    id = interaction.user.id
     if not user_exists(id):
-        await ctx.response.send_message("Please register first using /register")
+        await interaction.response.send_message("Please register first using /register")
     else:
         user = load_user(id)
         msg = user.log_poop(n)
         user.save()
-        await ctx.response.send_message(msg)
+        await interaction.response.send_message(msg)
 
 
 @tree.command(
@@ -114,17 +113,17 @@ async def log_poops(ctx, n: int = 1):
     description="look at how many times you pooped on a date (YYYY-MM-DD), 'total' or 'today'",
     guild=discord.Object(SERVER_ID)
 )
-async def check_log(ctx, date: str = 'today'):
+async def check_log(interaction, date: str = 'today'):
     """log n poops"""
-    id = ctx.user.id
+    id = interaction.user.id
     if not user_exists(id):
-        await ctx.response.send_message("Please register first using /register")
+        await interaction.response.send_message("Please register first using /register")
     else:
         user = load_user(id)
         count = user.get_poop_count(date)
 
         if not validate_date(date):
-            await ctx.response.send_message('Please enter a valid date stinky poo :rage:')
+            await interaction.response.send_message('Please enter a valid date stinky poo :rage:')
         else:
             if date == 'total':
                 msg = f'You pooped {count} time(s) in total :poop:'
@@ -132,7 +131,7 @@ async def check_log(ctx, date: str = 'today'):
                 msg = f'You pooped {count} time(s) today :poop:'
             else:
                 msg = f'You pooped {count} time(s) on {date} :poop:'
-            await ctx.response.send_message(msg)
+            await interaction.response.send_message(msg)
 
 
 @tree.command(
@@ -140,11 +139,11 @@ async def check_log(ctx, date: str = 'today'):
     description="look at a leaderboard on a date (YYYY-MM-DD), 'total' or 'today'",
     guild=discord.Object(SERVER_ID)
 )
-async def leaderboard(ctx, date: str = 'today'):
+async def leaderboard(interaction, date: str = 'today'):
     """look at leaderboard on date"""
 
     if not validate_date(date):
-        await ctx.response.send_message('Please enter a valid date stinky poo :rage:')
+        await interaction.response.send_message('Please enter a valid date stinky poo :rage:')
     else:
         leaderboard = load_leaderboard()
         if date == 'total':
@@ -153,7 +152,16 @@ async def leaderboard(ctx, date: str = 'today'):
             msg = leaderboard.get_today_leaderboard()
         else:
             msg = leaderboard.get_date_leaderboard(date)
-        await ctx.response.send_message(msg)
+        await interaction.response.send_message(msg)
 
 
-client.run(TOKEN)
+@client.event
+async def on_message(msg):
+    """send message through bot from ,dms if you have the OWNER_ID"""
+    if isinstance(msg.channel, discord.DMChannel) and str(msg.author.id) in OWNER_IDS:
+        channel = client.get_channel(int(CHANNEL_ID))
+        await channel.send(msg)
+
+
+if __name__ == '__main__':
+    client.run(TOKEN)
