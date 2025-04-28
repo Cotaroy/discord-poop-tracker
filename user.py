@@ -1,4 +1,3 @@
-
 from poops import Poops
 from const import USER_DATA_FOLDER
 import json
@@ -17,6 +16,14 @@ class User:
         self.id = id
         self.name = name
         self.poops = poops
+
+    def get_history(self):
+        """return history message"""
+        msg = f"{self.name}'s Poop History"
+        for date in self.poops.log:
+            if date != 'total':
+                msg += f'\n{date}: {self.poops.log[date]}'
+        return msg
 
     def log_poop(self, n: int):
         """log n poops"""

@@ -152,7 +152,23 @@ async def leaderboard(interaction, date: str = 'today'):
             msg = leaderboard.get_today_leaderboard()
         else:
             msg = leaderboard.get_date_leaderboard(date)
-        await interaction.response.send_message(msg)
+        await interaction.response.send_message(blockify(msg))
+
+
+@tree.command(
+    name="history",
+    description="show poop history",
+    guild=discord.Object(SERVER_ID)
+)
+async def history(interaction):
+    """show history of user"""
+    id = interaction.user.id
+    if not user_exists(id):
+        await interaction.response.send_message("Please register first using /register")
+    else:
+        user = load_user(id)
+        msg = user.get_history()
+        await interaction.response.send_message(blockify(msg))
 
 
 @client.event
