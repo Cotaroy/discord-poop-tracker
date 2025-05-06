@@ -36,7 +36,7 @@ async def on_ready():
     guild=discord.Object(SERVER_ID)
 )
 async def register(interaction):
-    """register user into pooper tracker"""
+    """register user into pooper"""
     id = interaction.user.id
     name = interaction.user.name
     already_registered = user_exists(id)
@@ -57,7 +57,7 @@ async def register(interaction):
     guild=discord.Object(SERVER_ID)
 )
 async def reregister(interaction):
-    """reregister user into star rail sim players"""
+    """reregister user into poop tracker"""
     id = interaction.user.id
     name = interaction.user.name
     role = interaction.user.guild.get_role(int(ROLE_ID))
